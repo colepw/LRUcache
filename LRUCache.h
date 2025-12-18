@@ -15,10 +15,10 @@ class LRUCache {
 
         std::optional<int> get(int key);
         void put(int key, int value);
-        std::size_t size() const;
-        bool contains(int key) const;
-        bool erase(int key);
-        void clear();
+        [[nodiscard]] std::size_t size() const noexcept;
+        [[nodiscard]] bool contains(int key) const noexcept;
+        [[nodiscard]] bool erase(int key);
+        void clear() noexcept;
 
     private:
         struct Node {
