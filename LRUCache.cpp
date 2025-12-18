@@ -1,9 +1,14 @@
-#include <LRUCache.h>
+#include "LRUCache.h"
 #include <utility>
 #include <unordered_map>
 #include <memory>
 #include <cstddef>
 #include <optional>
+#include <cassert>
+
+
+// PUBLIC API FUNCTIONS
+
 
 LRUCache::LRUCache(std::size_t capacity) : capacity_(capacity) {
     head_.prev = nullptr;
@@ -25,15 +30,41 @@ std::optional<int> LRUCache::get(int key) {
     Node* n = it->second.get(); // Get and move raw ptr, return its value
     move_to_front(n);
 
+    check_invariants();
+
     return n->value;
 }
 
 void LRUCache::put(int key, int value) {
 
+
+    check_invariants();
 }
 
+std::size_t LRUCache::size() const {
+
+}
+
+bool LRUCache::contains(int key) const {
+
+}
+
+bool LRUCache::erase(int key) {
+
+
+    check_invariants();
+}
+
+void LRUCache::clear() {
+
+}
+
+
+// PRIVATE HELPERS
+
+
 void LRUCache::detach(Node* n) {
-    if (!n || n == &head_ || n == &tail_ || !n->next || !n->prev) return;
+    assert(n && n != &head_ && n != &tail_ && n->next && n->prev);
 
     n->prev->next = n->next;
     n->next->prev = n->prev;
@@ -42,11 +73,32 @@ void LRUCache::detach(Node* n) {
     n->next = nullptr;
 }
 
-void LRUCache::attach_front(Node* n) { // Detach n if needed, then reinsert at start of list
-    detach(n);
+void LRUCache::attach_front(Node* n) {
+    assert(n && n != &head_ && n != &tail_ && !n->next && !n->prev);
 
     n->next = head_.next;
     n->prev = &head_;
-    head_.next->prev = n;
+    n->next->prev = n;
+
     head_.next = n;
+}
+
+void LRUCache::move_to_front(Node* n) { // Detach n, then reinsert at start of list
+    detach(n);
+    attach_front(n);
+}
+
+void LRUCache::evict_lru() {
+    assert(head_.next != &tail_);
+
+    Node* v = tail_.prev;
+    detach(v);
+
+    store_.erase(v->key);
+
+    check_invariants();
+}
+
+void LRUCache::check_invariants() const {
+
 }
