@@ -60,6 +60,10 @@ std::size_t LRUCache::size() const noexcept {
     return store_.size();
 }
 
+bool LRUCache::empty() const noexcept {
+    return !size();
+}
+
 bool LRUCache::contains(int key) const noexcept {
     auto it = store_.find(key);
 

@@ -16,6 +16,7 @@ class LRUCache {
         std::optional<int> get(int key);
         void put(int key, int value);
         [[nodiscard]] std::size_t size() const noexcept;
+        [[nodiscard]] bool empty() const noexcept;
         [[nodiscard]] bool contains(int key) const noexcept;
         [[nodiscard]] bool erase(int key);
         void clear() noexcept;
