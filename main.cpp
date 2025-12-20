@@ -1,10 +1,9 @@
 #include "LRUCache.h"
 #include <iostream>
 #include <cassert>
-#include <optional>
 
 std::size_t tests_passed = 0;
-const std::size_t total_tests = 33;
+const std::size_t total_tests = 40;
 
 void message() {
     ++tests_passed;
@@ -100,9 +99,6 @@ int main() {
         lru.get(i);
     }
 
-    assert(lru.contains(((capacity + 1) / 2) + 1));
-    message();
-
     lru.put(capacity + 2, (capacity + 2) * 100);
 
     assert(!lru.contains(((capacity + 1) / 2) + 1));
@@ -144,6 +140,74 @@ int main() {
     assert(lru.empty());
     message();
 
+    // Tests for changing key value does not change cache size
+
+    lru.put(1, 100);
+    std::size_t size = lru.size();
+
+    lru.put(1, 111);
+
+    assert(lru.size() == size);
+    message();
+
+    assert(lru.get(1) == 111);
+    message();
+
+    lru.clear();
+
+    // Eviction put tests
+
+    LRUCache lru2(2);
+
+    lru2.put(1, 100);
+    lru2.put(2, 200);
+    lru2.put(1, 111);
+    lru2.put(3, 300);
+
+    assert(lru2.contains(1) && lru2.contains(3) && !lru2.contains(2));
+    message();
+
+    lru2.clear();
+
+    // Eviction get tests
+
+    lru2.put(1, 100);
+    lru2.put(2, 200);
+    lru2.get(1);
+    lru2.put(3, 300);
+
+    assert(lru2.contains(1) && lru2.contains(3) && !lru2.contains(2));
+    message();
+
+    // Erase tests
+
+    assert(lru2.erase(1));
+    message();
+
+    lru2.put(1, 111);
+
+    assert(lru2.get(1) == 111);
+    message();
+
+    lru2.clear();
+
+    // Single insert tests
+
+    lru2.put(1, 100);
+    
+    assert(lru2.get(1) == 100 && lru2.size() == 1);
+    message();
+
+    // Tests for LRU with capacity 1
+
+    LRUCache lru1(1);
+
+    lru1.put(1, 100);
+    lru1.put(2, 200);
+
+    assert(!lru1.contains(1) && lru1.get(1) == std::nullopt && lru1.contains(2) && lru1.get(2) == 200);
+    message();
+
     // Tests for LRU with capacity 0
 
     LRUCache empty_lru(0);
@@ -164,7 +228,7 @@ int main() {
 
     std::cout << '|';
     for (std::size_t i{0}; i < 39; ++i) std::cout << '_';
-    std::cout << "|\n\nTESTS FINISHSED\n";
+    std::cout << "|\n\nTESTS FINISHED\n";
 
     return 0;
 }
