@@ -144,6 +144,8 @@ int main() {
     assert(lru.empty());
     message();
 
+    // Tests for LRU with capacity 0
+
     LRUCache empty_lru(0);
 
     empty_lru.put(1, 1);
